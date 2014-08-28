@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">系统更新</string>
+    
+    <string name="check_update">检查更新</string>
+    <string name="install_notice">安装更新</string>
+    
+    <!-- update download -->
+    <string name="download_title">下载升级文件</string>
+    <string name="download_description">下载升级所需要的更新文件</string>
+	<string name="download_any_data">通过任何可用的数据连接进行下载</string>
+	<string name="download_only_wifi">仅通过WLAN下载</string>
+	<string name="version">版本:</string>
+	<string name="size">大小:%s bytes</string>
+	<string name="description">说明:</string>
+	<string name="network_not_avaliable">网络不可用！</string>
+    
+    <!--  install activity  -->
+    <string name="install_notices">更新前请备份数据(如，联系人，信息，通话记录等),并保证有足够的电量</string>
+    <string name="later">稍后安装</string>
+	<string name="install">现在安装</string>
+	<string name="abandon">放弃安装</string>
+	<string name="install_alerting">升级过程中您无法使用电话，也不能拨打紧急电话。在升级过程中请勿关闭电话，或者取出电池或存储卡。</string>
+    <string name ="update_later_msg">点击进入系统更新</string>
+    <string name ="exit_title">稍后更新</string>
+    <string name ="exit_message">您可以随时从通知栏进入更新</string>
+    <string name ="check_file_failed">文件校验失败，请重新下载</string>
+	
+	<string name="ok">确认</string>
+	
+
+</resources>
