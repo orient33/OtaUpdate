@@ -27,15 +27,17 @@ public class DownloadReceiver extends BroadcastReceiver {
 			Query query = new Query();
 			query.setFilterById(cache_id);
 			Cursor cur = dm.query(query);
-			if (cur.moveToFirst()) {
+			if (cur != null && cur.moveToFirst()) {
 				int columnIndex = cur.getColumnIndex(DownloadManager.COLUMN_STATUS);
 				if (DownloadManager.STATUS_SUCCESSFUL == cur.getInt(columnIndex)) {
-					String file = cur.getString(cur.getColumnIndexOrThrow(DownloadManager.COLUMN_LOCAL_URI));
-					Util.logd(TAG, "filepath = " + file);
-					showUpdateInstall(context, file, Util.getUpdateInfoCache(context));
+					String fileUri = cur.getString(cur.getColumnIndexOrThrow(DownloadManager.COLUMN_LOCAL_URI));
+					String filename = cur.getString(cur.getColumnIndexOrThrow(DownloadManager.COLUMN_LOCAL_FILENAME));
+					Util.logd(TAG, "download, local uri = " + fileUri +",, local filename = "+ filename);
+					showUpdateInstall(context, filename, Util.getUpdateInfoCache(context));
 					//wipe cache
 					Util.putDownloadInfo(context, 0, null);
 				}
+				cur.close();
 			}
 		}
 	

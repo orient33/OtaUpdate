@@ -49,10 +49,12 @@ public class InstallUpdate extends Activity implements View.OnClickListener {
         //获取 UpdateInfo 
         if (intent.getStringExtra("update_file") != null) {
             String file_path = getIntent().getStringExtra("update_file");
-            mUpdateInfo = (UpdateInfo) getIntent().getParcelableExtra(
-                    "update_info");
-            mUpdateFile = new File(file_path.substring(file_path.indexOf(sd_path)));
-            Util.putStringToSP(this, "file_pa", file_path.substring(file_path.indexOf(sd_path)));
+            mUpdateInfo = (UpdateInfo) getIntent().getParcelableExtra("update_info");
+			if (file_path.startsWith("file://"))
+				file_path = file_path.substring(7);
+			
+			mUpdateFile = new File(file_path);
+			Util.putStringToSP(this, "file_pa", file_path);
         } else { 			// come from Notification 
             mUpdateInfo = Util.getUpdateInfoCache(this);
             mUpdateFile = new File(Util.getStringFromSP(this, "file_pa"));

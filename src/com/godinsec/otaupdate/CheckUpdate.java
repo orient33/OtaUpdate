@@ -19,7 +19,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.godinsec.otaupdate.Util.DeviceInfo;
 import com.godinsec.otaupdate.Util.UpdateInfo;
@@ -128,7 +127,6 @@ public class CheckUpdate extends Activity {
 		}
 		
 		void startDownload(UpdateInfo ui) {
-//			Toast.makeText(mmActivity, "start download! \n" + ui.url, Toast.LENGTH_LONG).show();
 			File f = new File(Environment.getExternalStorageDirectory().getPath()+"/update.zip");
 	        if (f.exists()) {
 	            f.delete();
@@ -140,10 +138,8 @@ public class CheckUpdate extends Activity {
 	        Request dwreq = new DownloadManager.Request(uri);
 	        dwreq.setTitle(getString(R.string.download_title));
 	        dwreq.setDescription(getString(R.string.download_description));
-
-	        dwreq.setDestinationInExternalPublicDir(
-	                Environment.DIRECTORY_DOWNLOADS, 	//recovery下不能访问
-	                "../update.zip");	// download/../update.zip    maybe should check if file exist .
+	        // hide API , only build from android source. not for 3th app.
+	        dwreq.setDestinationToSystemCache();
 	        
 	        dwreq.setNotificationVisibility(Request.VISIBILITY_VISIBLE);
 	        
