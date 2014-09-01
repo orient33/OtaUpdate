@@ -6,6 +6,10 @@
     <string name="check_update">检查更新</string>
     <string name="install_notice">安装更新</string>
     
+    
+    <!-- check update -->
+    <string name="checking_update">正在检查更新 #8230</string>
+    
     <!-- update download -->
     <string name="download_title">下载升级文件</string>
     <string name="download_description">下载升级所需要的更新文件</string>
@@ -28,6 +32,14 @@
     <string name ="check_file_failed">文件校验失败，请重新下载</string>
 	
 	<string name="ok">确认</string>
+	<string name="download">下载更新</string>
+	
+	<string name="no_network">没有可用的网络</string>
+	<string name="network_error">网络连接错误</string>
+	<string name="parser_error">解析配置错误</string>
+	
+	<string name="has_no_update">无可用更新</string>
+	<string name="notice">提示</string>
 	
 
 </resources>

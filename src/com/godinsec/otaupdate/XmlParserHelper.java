@@ -9,6 +9,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.CoreConnectionPNames;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -20,15 +21,24 @@ import com.godinsec.otaupdate.Util.UpdateInfo;
 
 public class XmlParserHelper {
 	private static final String TAG ="[XmlParserHelper]";
-	
+	public static final class NetError{
+		public String msg;
+		public int code;
+		public NetError(){
+			msg = "";
+			code = 0;
+		}
+	}
 	/**
 	 *  获取本设备的更新地址 url<br>
 	 *  注意 需从 非UI线程调用
 	 * */
-	public static final DeviceInfo getDeviceInfo(){
+	public static final DeviceInfo getDeviceInfo(NetError ne){
 		InputStream is = null;
 		try{
-			is = requestURL(Util.URL); 
+			is = requestURL(Util.URL, ne); 
+			if(is == null)
+				return null;
 			XmlPullParser parser = Xml.newPullParser();
 			parser.setInput(is, "UTF-8");
 			int type;
@@ -48,8 +58,12 @@ public class XmlParserHelper {
 			}
 		} catch (XmlPullParserException e) {
 			Util.loge(TAG, "getDeviceInfo()  " + e);
+			ne.code = 10;
+			ne.msg = e.getMessage();
 		} catch (IOException e) {
 			Util.loge(TAG, "getDeviceInfo()  " + e);
+			ne.code = 11;
+			ne.msg = e.getMessage();
 		} finally {
 			Util.closeQuiet(is);
 		}
@@ -57,7 +71,7 @@ public class XmlParserHelper {
 	}
 
 	/** 请求url, 返回其InputStream*/
-	private static final InputStream requestURL(String url) {
+	private static final InputStream requestURL(String url, NetError ne) {
 		InputStream is = null;
 		HttpGet httpGet = new HttpGet(url);
 		HttpClient client = new DefaultHttpClient();
@@ -65,15 +79,22 @@ public class XmlParserHelper {
 		int resCode = -1;
 		try {
 			Util.logd(TAG, "requestURL()  url = " + url);
+			Util.logd(TAG, "set time out  6 s !!!");
+			client.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, 6*1000);
+			client.getParams().setParameter(CoreConnectionPNames.SO_TIMEOUT, 6*1000);
 			hRes = client.execute(httpGet);
 			resCode = hRes.getStatusLine().getStatusCode();
 			if (resCode != 200) {
 				Util.loge(TAG, "requestURL() resCode = " + resCode);
+				ne.code = resCode;
+				ne.msg = "http response error. " + resCode;
 				return null;
 			}
 			is = hRes.getEntity().getContent();
 		} catch (IOException e) {
 			Util.loge(TAG, "" + e);
+			ne.code = 1;
+			ne.msg = e.getMessage();
 		}
 		return is;
 	}
@@ -82,12 +103,12 @@ public class XmlParserHelper {
 	 *  从地址url中得到所有升级描述，并筛选出适合本设备的升级信息, 即版本基于version_from.<br>
 	 *  注意 需从 非UI线程调用 
 	 * */
-	public static final List<UpdateInfo> getUpdateInfos(String url, String version_from){
+	public static final List<UpdateInfo> getUpdateInfos(String url, String version_from, NetError ne){
 		List<UpdateInfo> updates = new ArrayList<UpdateInfo>();
 		if(!url.startsWith("http://"))
 			url = Util.BASE_URL + url;
 		
-		InputStream is = requestURL(url);
+		InputStream is = requestURL(url, ne);
 		if(is != null){
 			XmlPullParser parser = Xml.newPullParser();
 			try{
@@ -126,8 +147,12 @@ public class XmlParserHelper {
 				}
 			} catch (XmlPullParserException e) {
 				Util.loge(TAG, "writeUpdateInfoList() " + e);
+				ne.code = 20;
+				ne.msg = e.getMessage();
 			} catch (IOException e) {
 				Util.loge(TAG, "writeUpdateInfoList() " + e);
+				ne.code = 21;
+				ne.msg = e.getMessage();
 			} finally {
 				Util.closeQuiet(is);
 			}
